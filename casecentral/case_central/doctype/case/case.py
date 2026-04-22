@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
+from frappe.utils import getdate, today
 
 # Fields aligned with Case Sessions; next_date is intentionally excluded from mirror.
 _SESSION_TO_HISTORY_FIELDS = (
@@ -31,11 +32,14 @@ class Case(Document):
 		self.sync_case_history_from_sessions()
 
 	def sync_case_history_from_sessions(self):
-		"""Mirror Case Sessions into Case History (same fields as sessions; excludes next session date)."""
-		self.set("case_history", [])
-		for row in self.get("case_sessions") or []:
+		"""Move due Case Sessions (next_date == today) into Case History."""
+		current_date = getdate(today())
+		for row in list(self.get("case_sessions") or []):
+			if not row.get("next_date") or getdate(row.get("next_date")) != current_date:
+				continue
 			entry = {fieldname: row.get(fieldname) for fieldname in _SESSION_TO_HISTORY_FIELDS}
 			self.append("case_history", entry)
+			self.remove(row)
 
 	def on_update(self):
 		next_hearing = frappe.db.sql(
