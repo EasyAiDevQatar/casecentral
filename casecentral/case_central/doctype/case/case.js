@@ -12,6 +12,16 @@ frappe.ui.form.on('Case', {
 				};
 			}
 		});
+
+		// Case History mirrors sessions without next session date; hide it in this grid only.
+		function hide_case_history_next_date() {
+			const grid = frm.fields_dict.case_history && frm.fields_dict.case_history.grid;
+			if (grid) {
+				grid.update_docfield_property('next_date', 'hidden', 1);
+			}
+		}
+		hide_case_history_next_date();
+		setTimeout(hide_case_history_next_date, 200);
 	},
 	after_save: function(frm) {
 		if(frm.doc.status == "Pending" && frm.doc.registration_number) {
@@ -41,21 +51,6 @@ frappe.ui.form.on('Case', {
 	},
 	case_year: function(frm){
 		set_registration_number(frm);
-	}
-});
-
-frappe.ui.form.on('Case History', {
-	case_history_add: function(frm, cdt, cdn) {
-		var rows = Object.entries(locals[cdt]);
-		var current_row = locals[cdt][cdn];
-		// The index in locals starts from 1 whereas in rows it starts from 0 as such 2 is subtracted
-    	var previous_row = locals[cdt][rows[current_row.idx - 2][0]];
-		if (previous_row) {
-			current_row.judge = previous_row.judge;
-			current_row.business_on_date = previous_row.hearing_date;
-			current_row.purpose_of_hearing = previous_row.purpose_of_hearing;
-			refresh_field('case_history');
-		}
 	}
 });
 

@@ -52,6 +52,8 @@
   "court_number_and_judge",
   "next_hearing_date",
   "date_of_disposal",
+  "case_sessions_section",
+  "case_sessions",
   "case_history_details_section",
   "case_history",
   "form_1_tab",
@@ -160,7 +162,6 @@
   },
   {
    "collapsible": 1,
-   "collapsible_depends_on": "eval: doc.status==\"InProgress\"",
    "fieldname": "case_history_details_section",
    "fieldtype": "Section Break",
    "label": "Case History Details"
@@ -316,6 +317,19 @@
    "fieldtype": "Date",
    "label": "Date of Disposal",
    "mandatory_depends_on": "eval:doc.status==\"Disposed\""
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval: doc.status==\"InProgress\"",
+   "fieldname": "case_sessions_section",
+   "fieldtype": "Section Break",
+   "label": "Case Sessions"
+  },
+  {
+   "fieldname": "case_sessions",
+   "fieldtype": "Table",
+   "label": "Case Sessions",
+   "options": "Case Sessions"
   },
   {
    "fieldname": "date_of_registration",

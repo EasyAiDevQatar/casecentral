@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2023-03-27 14:39:49.455352",
+ "creation": "2025-01-27 12:00:00.000000",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -138,7 +138,7 @@
  "modified": "2026-04-22 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Case Central",
- "name": "Case History",
+ "name": "Case Sessions",
  "owner": "Administrator",
  "permissions": [],
  "sort_field": "modified",
