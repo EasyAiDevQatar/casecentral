@@ -52,6 +52,7 @@
   "court_number_and_judge",
   "next_hearing_date",
   "date_of_disposal",
+  "almeezan_link",
   "case_sessions_section",
   "case_sessions",
   "case_history_details_section",
@@ -86,6 +87,7 @@
   {
    "fieldname": "cnr",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "CNR",
    "length": 16,
    "unique": 1
@@ -186,6 +188,7 @@
   {
    "fieldname": "court_number_and_judge",
    "fieldtype": "Data",
+   "hidden": 1,
    "in_list_view": 1,
    "label": "Court Number and Judge"
   },
@@ -224,11 +227,13 @@
   {
    "fieldname": "ecourt",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "eCourt"
   },
   {
    "fieldname": "ecase_type",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "eCase Type"
   },
   {
@@ -319,6 +324,14 @@
    "mandatory_depends_on": "eval:doc.status==\"Disposed\""
   },
   {
+   "default": "https://www.almeezan.qa/",
+   "fieldname": "almeezan_link",
+   "fieldtype": "Data",
+   "label": "Almeezan",
+   "options": "URL",
+   "read_only": 1
+  },
+  {
    "collapsible": 1,
    "collapsible_depends_on": "eval: doc.status==\"InProgress\"",
    "fieldname": "case_sessions_section",
@@ -344,6 +357,7 @@
   {
    "fieldname": "nature_of_case",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Nature of Case",
    "options": "Nature of Case"
   },
@@ -495,11 +509,6 @@
   {
    "group": "Legal Service Entry",
    "link_doctype": "Legal Service Entry",
-   "link_fieldname": "case"
-  },
-  {
-   "group": "Document Outward",
-   "link_doctype": "Document Outward",
    "link_fieldname": "case"
   },
   {

@@ -84,11 +84,11 @@
   },
   {
    "fetch_from": "customer.mobile_no",
+   "fetch_if_empty": 1,
    "fieldname": "contact_no",
    "fieldtype": "Data",
    "label": "Contact No",
-   "options": "Phone",
-   "reqd": 1
+   "options": "Phone"
   },
   {
    "fieldname": "column_break_1",

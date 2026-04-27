@@ -235,6 +235,7 @@
   {
    "fieldname": "project_template",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "From Template",
    "options": "Project Template"
   },
@@ -299,16 +300,6 @@
   {
    "group": "Case",
    "link_doctype": "Case",
-   "link_fieldname": "matter"
-  },
-  {
-   "group": "Case",
-   "link_doctype": "Caveat",
-   "link_fieldname": "matter"
-  },
-  {
-   "group": "Document Outward",
-   "link_doctype": "Document Outward",
    "link_fieldname": "matter"
   },
   {

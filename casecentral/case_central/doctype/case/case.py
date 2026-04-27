@@ -29,7 +29,23 @@ _SESSION_TO_HISTORY_FIELDS = (
 
 class Case(Document):
 	def validate(self):
+		self.populate_session_defaults()
 		self.sync_case_history_from_sessions()
+
+	def populate_session_defaults(self):
+		"""Keep session rows aligned with case-level client and case details."""
+		client_name = self.get("customer_name")
+		client_capacity = self.get("representing")
+		case_number = self.get("case_no")
+
+		for table_field in ("case_sessions", "case_history"):
+			for row in self.get(table_field) or []:
+				if client_name:
+					row.client = client_name
+				if client_capacity:
+					row.client_capacity = client_capacity
+				if case_number:
+					row.case_number = case_number
 
 	def sync_case_history_from_sessions(self):
 		"""Move due Case Sessions (next_date == today) into Case History."""

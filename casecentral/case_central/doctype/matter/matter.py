@@ -11,6 +11,11 @@ from erpnext import get_default_company
 from erpnext.setup.doctype.holiday_list.holiday_list import is_holiday
 
 class Matter(Document):
+	def validate(self):
+		# Keep amended draft usable instead of inheriting cancelled status.
+		if self.amended_from and self.docstatus == 0 and self.status == "Cancelled":
+			self.status = "Open"
+
 	def on_submit(self):
 		if self.project_template:
 			self.copy_from_template()

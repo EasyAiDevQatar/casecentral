@@ -5,8 +5,32 @@ frappe.ui.form.on('Sales Invoice', {
                 get_legal_services_to_invoice(frm);
             },__("Get Items From"));
         }
-    }
+    },
+	matter: function(frm) {
+		autofill_from_matter(frm);
+	}
 });
+
+var autofill_from_matter = function(frm) {
+	if (!frm.doc.matter || frm.doc.docstatus !== 0) return;
+
+	frappe.db.get_value("Matter", frm.doc.matter, ["customer", "service"]).then((r) => {
+		const matter_data = r.message || {};
+		if (matter_data.customer && !frm.doc.customer) {
+			frm.set_value("customer", matter_data.customer);
+		}
+
+		if (!matter_data.service || (frm.doc.items || []).length) return;
+
+		frappe.db.get_value("Item", matter_data.service, "name").then((item_check) => {
+			if (!item_check.message || !item_check.message.name) return;
+			const row = frm.add_child("items");
+			row.item_code = matter_data.service;
+			row.qty = 1;
+			frm.refresh_field("items");
+		});
+	});
+};
 
 var get_legal_services_to_invoice = function(frm) {
 	var me = this;
