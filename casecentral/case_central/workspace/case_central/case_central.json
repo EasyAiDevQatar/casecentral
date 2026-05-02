@@ -250,7 +250,7 @@
    "format": "{} Matters",
    "label": "Matter",
    "link_to": "Matter",
-   "stats_filter": "{\"status\":[\"!=\",\"Cancelled\"]}",
+   "stats_filter": "",
    "type": "DocType"
   },
   {
@@ -259,7 +259,7 @@
    "format": "{}",
    "label": "Customer",
    "link_to": "Customer",
-   "stats_filter": "{\"disabled\":[\"=\",0]}",
+   "stats_filter": "",
    "type": "DocType"
   },
   {
@@ -268,7 +268,7 @@
    "format": "{} InProgress",
    "label": "Case",
    "link_to": "Case",
-   "stats_filter": "{\"status\":[\"=\",\"InProgress\"]}",
+   "stats_filter": "",
    "type": "DocType"
   },
   {
