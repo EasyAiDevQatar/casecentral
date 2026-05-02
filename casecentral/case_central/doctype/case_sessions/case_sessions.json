@@ -71,7 +71,6 @@
   {
    "fieldname": "client",
    "fieldtype": "Data",
-   "hidden": 1,
    "label": "Client"
   },
   {
