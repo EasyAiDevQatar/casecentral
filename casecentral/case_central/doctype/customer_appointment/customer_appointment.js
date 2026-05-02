@@ -18,6 +18,18 @@ frappe.ui.form.on('Customer Appointment', {
 		}
 	},
 
+	customer: function(frm) {
+		if (!frm.doc.customer) {
+			return;
+		}
+
+		frappe.db.get_value('Customer', frm.doc.customer, 'mobile_no').then((r) => {
+			if (r.message) {
+				frm.set_value('contact_no', r.message.mobile_no || '');
+			}
+		});
+	},
+
 	refresh: function(frm) {
 		frm.set_query('customer', () => {
 			return {

@@ -13,7 +13,6 @@
   "case_number",
   "chamber",
   "case_subject",
-  "client",
   "client_capacity",
   "opponent",
   "opponent_capacity",
@@ -100,7 +99,7 @@
    "label": "Previous Decision"
   },
   {
-   "columns": 4,
+   "columns": 6,
    "fieldname": "decision",
    "fieldtype": "Text",
    "in_list_view": 1,

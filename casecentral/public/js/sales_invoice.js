@@ -4,6 +4,7 @@ frappe.ui.form.on('Sales Invoice', {
             frm.add_custom_button(__('Legal Services'), function() {
                 get_legal_services_to_invoice(frm);
             },__("Get Items From"));
+			autofill_from_matter(frm);
         }
     },
 	matter: function(frm) {
@@ -22,12 +23,37 @@ var autofill_from_matter = function(frm) {
 
 		if (!matter_data.service || (frm.doc.items || []).length) return;
 
-		frappe.db.get_value("Item", matter_data.service, "name").then((item_check) => {
-			if (!item_check.message || !item_check.message.name) return;
+		get_invoice_item_for_service(matter_data.service).then((service_item) => {
+			if (!service_item || !service_item.item_code) return;
 			const row = frm.add_child("items");
-			row.item_code = matter_data.service;
+			frappe.model.set_value(row.doctype, row.name, "item_code", service_item.item_code);
 			row.qty = 1;
+			if (service_item.rate) {
+				row.rate = service_item.rate;
+			}
+			if (service_item.description) {
+				row.description = service_item.description;
+			}
 			frm.refresh_field("items");
+		});
+	});
+};
+
+var get_invoice_item_for_service = function(service) {
+	return frappe.db.get_value("Legal Service", service, ["item", "item_code", "rate", "description"]).then((legal_service) => {
+		const service_data = legal_service.message || {};
+		const item_code = service_data.item || service_data.item_code;
+		if (item_code) {
+			return {
+				item_code: item_code,
+				rate: service_data.rate,
+				description: service_data.description
+			};
+		}
+
+		return frappe.db.get_value("Item", service, "name").then((item_check) => {
+			if (!item_check.message || !item_check.message.name) return null;
+			return { item_code: item_check.message.name };
 		});
 	});
 };
