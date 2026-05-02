@@ -6,3 +6,4 @@ casecentral.patches.v14_0.update_matter_type_in_task
 casecentral.patches.v14_0.migrate_case_history_mirror_from_case_sessions
 casecentral.patches.v14_0.remove_obsolete_case_customizations
 casecentral.patches.v14_0.remove_document_outward_doctype
+casecentral.patches.v14_0.clear_case_central_workspace_shortcut_counts

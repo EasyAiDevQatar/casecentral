@@ -15,26 +15,66 @@ frappe.ui.form.on('Sales Invoice', {
 var autofill_from_matter = function(frm) {
 	if (!frm.doc.matter || frm.doc.docstatus !== 0) return;
 
-	frappe.db.get_value("Matter", frm.doc.matter, ["customer", "service"]).then((r) => {
-		const matter_data = r.message || {};
+	frappe.db.get_doc("Matter", frm.doc.matter).then((matter_data) => {
 		if (matter_data.customer && !frm.doc.customer) {
 			frm.set_value("customer", matter_data.customer);
 		}
 
-		if (!matter_data.service || (frm.doc.items || []).length) return;
+		if ((frm.doc.items || []).length) return;
 
-		get_invoice_item_for_service(matter_data.service).then((service_item) => {
-			if (!service_item || !service_item.item_code) return;
-			const row = frm.add_child("items");
-			frappe.model.set_value(row.doctype, row.name, "item_code", service_item.item_code);
-			row.qty = 1;
-			if (service_item.rate) {
-				row.rate = service_item.rate;
+		const service_rates = (matter_data.legal_service_rates || []).filter((row) => row.legal_service);
+		if (service_rates.length) {
+			add_legal_service_rate_items(frm, service_rates);
+			return;
+		}
+
+		if (matter_data.service) {
+			get_invoice_item_for_service(matter_data.service).then((service_item) => {
+				add_invoice_item(frm, service_item);
+			});
+		}
+	});
+};
+
+var add_legal_service_rate_items = function(frm, service_rates) {
+	const item_promises = service_rates.map((rate_row) => {
+		return get_invoice_item_for_service(rate_row.legal_service).then((service_item) => {
+			if (!service_item) return null;
+			return {
+				item_code: service_item.item_code,
+				rate: rate_row.rate || service_item.rate,
+				description: rate_row.description || service_item.description
+			};
+		});
+	});
+
+	Promise.all(item_promises).then((items) => {
+		const add_promises = items
+			.filter(Boolean)
+			.map((service_item) => add_invoice_item(frm, service_item, false));
+		Promise.all(add_promises).then(() => frm.refresh_field("items"));
+	});
+};
+
+var add_invoice_item = function(frm, service_item, refresh=true) {
+	if (!service_item || !service_item.item_code) return Promise.resolve();
+
+	const row = frm.add_child("items");
+	row.qty = 1;
+	return frappe.model.set_value(row.doctype, row.name, "item_code", service_item.item_code).then(() => {
+		const set_values = [frappe.model.set_value(row.doctype, row.name, "qty", 1)];
+		if (service_item.rate) {
+			set_values.push(frappe.model.set_value(row.doctype, row.name, "rate", service_item.rate));
+		}
+		if (service_item.description) {
+			set_values.push(
+				frappe.model.set_value(row.doctype, row.name, "description", service_item.description)
+			);
+		}
+		return Promise.all(set_values).then(() => {
+			if (refresh) {
+				frm.refresh_field("items");
 			}
-			if (service_item.description) {
-				row.description = service_item.description;
-			}
-			frm.refresh_field("items");
 		});
 	});
 };
