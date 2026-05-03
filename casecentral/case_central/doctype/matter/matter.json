@@ -286,6 +286,11 @@
    "link_fieldname": "matter"
   },
   {
+   "group": "Billing and Payments",
+   "link_doctype": "Sales Invoice",
+   "link_fieldname": "matter"
+  },
+  {
    "group": "Legal Services Entry",
    "link_doctype": "Legal Service Entry",
    "link_fieldname": "matter"
