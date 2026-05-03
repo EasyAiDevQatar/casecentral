@@ -19,11 +19,14 @@ def execute():
 	workspace_data = json.loads(workspace_path.read_text())
 
 	if frappe.db.exists("Workspace", "Case Central"):
-		workspace = frappe.get_doc("Workspace", "Case Central")
-		workspace.update(workspace_data)
-	else:
-		workspace = frappe.get_doc(workspace_data)
+		frappe.delete_doc("Workspace", "Case Central", force=True, ignore_permissions=True)
+		frappe.db.commit()
 
+	workspace = frappe.get_doc(workspace_data)
+	workspace.flags.ignore_links = True
+	workspace.flags.ignore_validate_update_after_submit = True
+	workspace.flags.ignore_version = True
+	workspace.flags.ignore_mandatory = True
 	workspace.name = "Case Central"
 	workspace.label = "Case Central"
 	workspace.module = "Case Central"
@@ -31,4 +34,5 @@ def execute():
 	workspace.is_hidden = 0
 	workspace.for_user = ""
 	workspace.parent_page = ""
-	workspace.save(ignore_permissions=True)
+
+	workspace.insert(ignore_permissions=True)
