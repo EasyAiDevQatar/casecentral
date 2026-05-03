@@ -5,25 +5,25 @@ frappe.query_reports["Daily Timesheet Summary - Custom"] = {
 	filters: [
 		{
 			fieldname: "from_date",
-			label: __("From Date"),
+			label: __("من تاريخ"),
 			fieldtype: "Date",
 			default: frappe.datetime.get_today(),
 		},
 		{
 			fieldname: "to_date",
-			label: __("To Date"),
+			label: __("إلى تاريخ"),
 			fieldtype: "Date",
 			default: frappe.datetime.get_today(),
 		},
 		{
 			fieldname: "matter",
-			label: __("Matter"),
+			label: __("الماتر"),
 			fieldtype: "Link",
 			options: "Matter",
 		},
 		{
 			fieldname: "employee",
-			label: __("Employee"),
+			label: __("الموظف"),
 			fieldtype: "Link",
 			options: "Employee",
 		},

@@ -23,16 +23,16 @@ def execute(filters=None):
 
 def get_column():
 	return [
-		_("Timesheet") + ":Link/Timesheet:120",
-		_("Employee") + "::150",
-		_("Employee Name") + "::150",
-		_("From Datetime") + "::140",
-		_("To Datetime") + "::140",
-		_("Hours") + "::70",
-		_("Activity Type") + "::120",
-		_("Task") + ":Link/Task:150",
-		_("Project") + ":Link/Project:120",
-		_("Status") + "::70",
+		_("الجدول الزمني") + ":Link/Timesheet:120",
+		_("الموظف") + "::150",
+		_("اسم الموظف") + "::150",
+		_("من وقت") + "::140",
+		_("إلى وقت") + "::140",
+		_("الساعات") + "::70",
+		_("نوع النشاط") + "::120",
+		_("المهمة") + ":Link/Task:150",
+		_("المشروع") + ":Link/Project:120",
+		_("الحالة") + "::70",
 	]
 
 

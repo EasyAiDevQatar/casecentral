@@ -1,4 +1,4 @@
-"""Remove the obsolete Document Outward doctype from installed sites."""
+"""Remove obsolete Caveat and Document Outward doctypes from installed sites."""
 
 from __future__ import annotations
 
@@ -7,13 +7,17 @@ import json
 import frappe
 
 
+OBSOLETE_DOCTYPES = {"Caveat", "Document Outward"}
+
+
 def execute():
-	remove_document_outward_from_workspaces()
-	if frappe.db.exists("DocType", "Document Outward"):
-		frappe.delete_doc("DocType", "Document Outward", force=True, ignore_permissions=True)
+	remove_obsolete_doctypes_from_workspaces()
+	for doctype in OBSOLETE_DOCTYPES:
+		if frappe.db.exists("DocType", doctype):
+			frappe.delete_doc("DocType", doctype, force=True, ignore_permissions=True)
 
 
-def remove_document_outward_from_workspaces():
+def remove_obsolete_doctypes_from_workspaces():
 	for workspace_name in frappe.get_all("Workspace", pluck="name"):
 		workspace = frappe.get_doc("Workspace", workspace_name)
 		changed = False
@@ -21,7 +25,8 @@ def remove_document_outward_from_workspaces():
 		links = [
 			link
 			for link in workspace.get("links", [])
-			if link.get("link_to") != "Document Outward" and link.get("label") != "Document Outward"
+			if link.get("link_to") not in OBSOLETE_DOCTYPES
+			and link.get("label") not in OBSOLETE_DOCTYPES
 		]
 		if len(links) != len(workspace.get("links", [])):
 			workspace.set("links", links)
@@ -30,7 +35,8 @@ def remove_document_outward_from_workspaces():
 		shortcuts = [
 			shortcut
 			for shortcut in workspace.get("shortcuts", [])
-			if shortcut.get("link_to") != "Document Outward" and shortcut.get("label") != "Document Outward"
+			if shortcut.get("link_to") not in OBSOLETE_DOCTYPES
+			and shortcut.get("label") not in OBSOLETE_DOCTYPES
 		]
 		if len(shortcuts) != len(workspace.get("shortcuts", [])):
 			workspace.set("shortcuts", shortcuts)
@@ -41,8 +47,8 @@ def remove_document_outward_from_workspaces():
 			filtered_content = [
 				block
 				for block in content
-				if block.get("data", {}).get("shortcut_name") != "Document Outward"
-				and block.get("data", {}).get("card_name") != "Document Outward"
+				if block.get("data", {}).get("shortcut_name") not in OBSOLETE_DOCTYPES
+				and block.get("data", {}).get("card_name") not in OBSOLETE_DOCTYPES
 			]
 			if len(filtered_content) != len(content):
 				workspace.content = json.dumps(filtered_content, separators=(",", ":"))

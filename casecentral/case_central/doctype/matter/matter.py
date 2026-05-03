@@ -222,3 +222,53 @@ def get_holiday_list(company=None):
 			)
 		)
 	return holiday_list
+
+
+@frappe.whitelist()
+def make_sales_invoice(matter):
+	matter_doc = frappe.get_doc("Matter", matter)
+	if not matter_doc.customer:
+		frappe.throw(_("Please set Customer in Matter {0}").format(frappe.bold(matter_doc.name)))
+
+	sales_invoice = frappe.new_doc("Sales Invoice")
+	sales_invoice.customer = matter_doc.customer
+	sales_invoice.company = matter_doc.company
+	sales_invoice.matter = matter_doc.name
+
+	add_legal_service_rate_items(sales_invoice, matter_doc)
+
+	if not sales_invoice.items:
+		frappe.throw(_("Please add Legal Service Rates with linked Legal Services before creating invoice."))
+
+	sales_invoice.set_missing_values()
+	return sales_invoice
+
+
+def add_legal_service_rate_items(sales_invoice, matter_doc):
+	for service_rate in matter_doc.get("legal_service_rates") or []:
+		if not service_rate.legal_service:
+			continue
+
+		item_code = get_legal_service_item(service_rate.legal_service)
+		if not item_code:
+			frappe.throw(
+				_("Please set Item in Legal Service {0}").format(frappe.bold(service_rate.legal_service))
+			)
+
+		item = sales_invoice.append("items", {})
+		item.item_code = item_code
+		item.qty = 1
+		item.rate = flt(service_rate.rate)
+		item.description = service_rate.description
+
+
+def get_legal_service_item(legal_service):
+	item = frappe.db.get_value("Legal Service", legal_service, "item")
+	if item:
+		return item
+
+	item_code = frappe.db.get_value("Legal Service", legal_service, "item_code")
+	if item_code and frappe.db.exists("Item", item_code):
+		return item_code
+
+	return None

@@ -3,6 +3,22 @@
 
 frappe.ui.form.on('Matter', {
 	refresh: function(frm) {
+		if (!frm.is_new()) {
+			frm.add_custom_button(__('Create Sales Invoice'), function() {
+				frappe.call({
+					method: 'casecentral.case_central.doctype.matter.matter.make_sales_invoice',
+					args: {
+						matter: frm.doc.name
+					},
+					callback: function(r) {
+						if (!r.message) return;
+						frappe.model.sync(r.message);
+						frappe.set_route('Form', r.message.doctype, r.message.name);
+					}
+				});
+			}, __('Create'));
+		}
+
 		frm.set_query('service_type', () => {
 			if (frm.doc.matter_type) {
 				return {
