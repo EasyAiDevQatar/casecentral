@@ -8,3 +8,4 @@ casecentral.patches.v14_0.remove_obsolete_case_customizations
 casecentral.patches.v14_0.remove_document_outward_doctype
 casecentral.patches.v14_0.clear_case_central_workspace_shortcut_counts
 casecentral.patches.v14_0.remove_obsolete_case_central_workspace_cards
+casecentral.patches.v14_0.restore_case_central_workspace
