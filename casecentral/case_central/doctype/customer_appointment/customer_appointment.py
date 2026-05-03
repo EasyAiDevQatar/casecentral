@@ -22,6 +22,7 @@ class OverlapError(frappe.ValidationError):
 
 class CustomerAppointment(Document):
 	def validate(self):
+		self.set_contact_no_from_customer_contact()
 		self.validate_overlaps()
 		self.set_appointment_datetime()
 		self.set_status()
@@ -35,6 +36,10 @@ class CustomerAppointment(Document):
 		self.title = _("{0} with {1}").format(
 			self.customer_name or self.customer, self.employee_name or self.employee
 		)
+
+	def set_contact_no_from_customer_contact(self):
+		if self.customer and not self.contact_no:
+			self.contact_no = get_customer_contact_no(self.customer)
 
 	def set_status(self):
 		today = getdate()
@@ -205,6 +210,49 @@ def cancel_appointment(appointment_id):
 		event_doc = frappe.get_doc("Event", appointment.event)
 		event_doc.event_type = "Cancelled"
 		event_doc.save()
+
+
+@frappe.whitelist()
+def get_customer_contact_no(customer):
+	contact_name = get_customer_contact(customer)
+	if not contact_name:
+		return ""
+
+	phone = frappe.db.get_value(
+		"Contact Phone",
+		{"parent": contact_name, "is_primary_mobile_no": 1},
+		"phone",
+	)
+	if phone:
+		return phone
+
+	phone = frappe.db.get_value(
+		"Contact Phone",
+		{"parent": contact_name, "is_primary_phone": 1},
+		"phone",
+	)
+	if phone:
+		return phone
+
+	return frappe.db.get_value("Contact Phone", {"parent": contact_name}, "phone") or ""
+
+
+def get_customer_contact(customer):
+	primary_contact = frappe.db.get_value("Customer", customer, "customer_primary_contact")
+	if primary_contact:
+		return primary_contact
+
+	return frappe.db.get_value(
+		"Dynamic Link",
+		{
+			"link_doctype": "Customer",
+			"link_name": customer,
+			"parenttype": "Contact",
+		},
+		"parent",
+		order_by="idx asc",
+	)
+
 
 @frappe.whitelist()
 def get_availability_data(date, employee):

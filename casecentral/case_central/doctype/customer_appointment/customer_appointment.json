@@ -83,7 +83,6 @@
    "read_only": 1
   },
   {
-   "fetch_from": "customer.mobile_no",
    "fetch_if_empty": 1,
    "fieldname": "contact_no",
    "fieldtype": "Data",

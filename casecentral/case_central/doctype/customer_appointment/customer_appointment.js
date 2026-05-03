@@ -23,9 +23,13 @@ frappe.ui.form.on('Customer Appointment', {
 			return;
 		}
 
-		frappe.db.get_value('Customer', frm.doc.customer, 'mobile_no').then((r) => {
-			if (r.message) {
-				frm.set_value('contact_no', r.message.mobile_no || '');
+		frappe.call({
+			method: 'casecentral.case_central.doctype.customer_appointment.customer_appointment.get_customer_contact_no',
+			args: {
+				customer: frm.doc.customer
+			},
+			callback: function(r) {
+				frm.set_value('contact_no', r.message || '');
 			}
 		});
 	},
