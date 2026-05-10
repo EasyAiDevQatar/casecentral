@@ -14,15 +14,18 @@ _SESSION_TO_HISTORY_FIELDS = (
 	"case_number",
 	"chamber",
 	"case_subject",
+	"case_location",
 	"client",
 	"client_capacity",
 	"opponent",
 	"opponent_capacity",
 	"previous_decision",
 	"decision",
-	"facts_summary",
+	"attendance_location",
 	"defense_summary",
-	"attachments_note",
+	"attachments",
+	"tokeel_no",
+	"tokeel_image",
 	"agent",
 )
 
@@ -37,6 +40,8 @@ class Case(Document):
 		client_name = self.get("customer_name")
 		client_capacity = self.get("representing")
 		case_number = self.get("case_no")
+		tokeel_no = self.get("custom_tokeel_no")
+		tokeel_image = self.get("custom_tokeel_image")
 
 		for table_field in ("case_sessions", "case_history"):
 			for row in self.get(table_field) or []:
@@ -46,6 +51,8 @@ class Case(Document):
 					row.client_capacity = client_capacity
 				if case_number:
 					row.case_number = case_number
+				row.tokeel_no = tokeel_no or ""
+				row.tokeel_image = tokeel_image or ""
 
 	def sync_case_history_from_sessions(self):
 		"""Move due Case Sessions (next_date == today) into Case History."""

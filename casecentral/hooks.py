@@ -21,6 +21,7 @@ fixtures = [
                     "Task Type-naming_series",
                     "Task Type-matter_type",
                     "Sales Invoice-matter",
+                    "Sales Invoice-custom_invoice_type",
                     "Sales Invoice Item-reference_doctype",
                     "Sales Invoice Item-reference_name",
                     "Payment Entry-custom_matter",
@@ -35,6 +36,12 @@ fixtures = [
                     "Timesheet-matter",
                     "Timesheet-appointment",
                     "Timesheet-case",
+                    "Timesheet Detail-custom_attachment",
+                    "Project-custom_visits",
+                    "Customer-custom_tokeel_no",
+                    "Customer-custom_tokeel_image",
+                    "Case-custom_tokeel_no",
+                    "Case-custom_tokeel_image",
                     "Project Template-custom_section_break_jjuzl",
                     "Project Template-custom_service",
                     "Project Template-custom_service_type",
@@ -265,7 +272,8 @@ doc_events = {
 # }
 scheduler_events = {
 	"daily": [
-        "casecentral.case_central.doctype.customer_appointment.customer_appointment.update_appointment_status"
+        "casecentral.case_central.doctype.customer_appointment.customer_appointment.update_appointment_status",
+        "casecentral.case_central.doctype.case_sessions.notifications.notify_upcoming_sessions",
 	]
 }
 # Testing

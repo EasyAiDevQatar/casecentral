@@ -1,5 +1,3 @@
 def get_data(data=None):
-	data = data or {}
-	data.setdefault("internal_links", {})
-	data["internal_links"]["Sales Invoice"] = "name"
-	return data
+	"""Do not force Sales Invoice as internal link by Matter name; links use field `matter` on SI."""
+	return data or {}

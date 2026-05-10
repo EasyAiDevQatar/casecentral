@@ -2,6 +2,18 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Case', {
+	matter: function(frm) {
+		apply_session_defaults(frm);
+	},
+	customer: function(frm) {
+		apply_session_defaults(frm);
+	},
+	custom_tokeel_no: function(frm) {
+		apply_session_defaults(frm);
+	},
+	custom_tokeel_image: function(frm) {
+		apply_session_defaults(frm);
+	},
 	refresh: function(frm) {
 		frm.set_query('nature_of_case', () => {
 			if (frm.doc.service) {
@@ -98,5 +110,11 @@ var apply_defaults_to_session_row = function(frm, row) {
 	}
 	if (frm.doc.case_no) {
 		row.case_number = frm.doc.case_no;
+	}
+	if (frm.doc.custom_tokeel_no !== undefined) {
+		row.tokeel_no = frm.doc.custom_tokeel_no || '';
+	}
+	if (frm.doc.custom_tokeel_image !== undefined) {
+		row.tokeel_image = frm.doc.custom_tokeel_image || '';
 	}
 }
