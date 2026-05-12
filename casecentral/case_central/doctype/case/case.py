@@ -53,6 +53,8 @@ class Case(Document):
 					row.case_number = case_number
 				row.tokeel_no = tokeel_no or ""
 				row.tokeel_image = tokeel_image or ""
+				if row.get("attachments") and not (row.get("session_attachments") or []):
+					row.append("session_attachments", {"file": row.attachments})
 
 	def sync_case_history_from_sessions(self):
 		"""Move due Case Sessions (next_date == today) into Case History."""
@@ -61,6 +63,10 @@ class Case(Document):
 			if not row.get("next_date") or getdate(row.get("next_date")) != current_date:
 				continue
 			entry = {fieldname: row.get(fieldname) for fieldname in _SESSION_TO_HISTORY_FIELDS}
+			entry["session_attachments"] = [
+				{"file": c.file, "description": c.get("description")}
+				for c in (row.get("session_attachments") or [])
+			]
 			self.append("case_history", entry)
 			self.remove(row)
 

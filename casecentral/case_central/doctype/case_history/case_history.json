@@ -14,6 +14,7 @@
   "chamber",
   "case_subject",
   "case_location",
+  "client",
   "client_capacity",
   "opponent",
   "opponent_capacity",
@@ -23,6 +24,7 @@
   "attendance_location",
   "defense_summary",
   "attachments",
+  "session_attachments",
   "tokeel_no",
   "tokeel_image",
   "agent"
@@ -80,7 +82,7 @@
   {
    "fieldname": "client",
    "fieldtype": "Data",
-   "hidden": 1,
+   "in_list_view": 1,
    "label": "Client"
   },
   {
@@ -135,6 +137,12 @@
    "fieldname": "attachments",
    "fieldtype": "Attach",
    "label": "Attachments"
+  },
+  {
+   "fieldname": "session_attachments",
+   "fieldtype": "Table",
+   "label": "Additional attachments",
+   "options": "Case Session Attachment"
   },
   {
    "fieldname": "tokeel_no",
