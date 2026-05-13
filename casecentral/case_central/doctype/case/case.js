@@ -37,7 +37,12 @@ function sanitize_case_grid_user_settings(frm) {
 
 frappe.ui.form.on('Case', {
 	onload: function(frm) {
-		frappe.model.user_settings.load(frm.doctype).then(() => {
+		if (frappe.session.user === "Guest") {
+			return;
+		}
+
+		frappe.model.user_settings.get(frm.doctype).then((settings) => {
+			frappe.model.user_settings[frm.doctype] = settings || {};
 			sanitize_case_grid_user_settings(frm);
 		});
 	},
@@ -54,6 +59,8 @@ frappe.ui.form.on('Case', {
 		apply_session_defaults(frm);
 	},
 	refresh: function(frm) {
+		sanitize_case_grid_user_settings(frm);
+
 		frm.set_query('nature_of_case', () => {
 			if (frm.doc.service) {
 				return {
