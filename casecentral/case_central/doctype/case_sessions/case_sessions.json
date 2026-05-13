@@ -24,7 +24,7 @@
   "attendance_location",
   "defense_summary",
   "attachments",
-  "session_attachments",
+  "additional_attachments",
   "tokeel_no",
   "tokeel_image",
   "agent"
@@ -138,10 +138,9 @@
    "label": "Attachments"
   },
   {
-   "fieldname": "session_attachments",
-   "fieldtype": "Table",
-   "label": "Additional attachments",
-   "options": "Case Session Attachment"
+   "fieldname": "additional_attachments",
+   "fieldtype": "Small Text",
+   "label": "Additional attachments"
   },
   {
    "fieldname": "tokeel_no",

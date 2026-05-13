@@ -1,7 +1,46 @@
 // Copyright (c) 2023, 4C Solutions and contributors
 // For license information, please see license.txt
 
+const SESSION_CHILD_DOCTYPES = ["Case Sessions", "Case History"];
+
+function sanitize_case_grid_user_settings(frm) {
+	if (!frm || frm.doc.doctype !== "Case") {
+		return;
+	}
+
+	const settings = frappe.model.user_settings[frm.doctype];
+	const grid_view = settings && settings.GridView;
+	if (!grid_view) {
+		return;
+	}
+
+	let updated = false;
+	SESSION_CHILD_DOCTYPES.forEach((child_doctype) => {
+		if (!grid_view[child_doctype]) {
+			return;
+		}
+
+		const rows = grid_view[child_doctype].filter(
+			(row) => row && row.fieldname && frappe.meta.get_docfield(child_doctype, row.fieldname)
+		);
+
+		if (rows.length !== grid_view[child_doctype].length) {
+			grid_view[child_doctype] = rows;
+			updated = true;
+		}
+	});
+
+	if (updated) {
+		frappe.model.user_settings.save(frm.doctype, "GridView", grid_view);
+	}
+}
+
 frappe.ui.form.on('Case', {
+	onload: function(frm) {
+		frappe.model.user_settings.load(frm.doctype).then(() => {
+			sanitize_case_grid_user_settings(frm);
+		});
+	},
 	matter: function(frm) {
 		apply_session_defaults(frm);
 	},
@@ -28,7 +67,7 @@ frappe.ui.form.on('Case', {
 		// Case History mirrors sessions without next session date; hide it in this grid only.
 		function hide_case_history_next_date() {
 			const grid = frm.fields_dict.case_history && frm.fields_dict.case_history.grid;
-			if (grid) {
+			if (grid && grid.meta) {
 				grid.update_docfield_property('next_date', 'hidden', 1);
 			}
 		}
@@ -92,10 +131,15 @@ var set_registration_number = function(frm) {
 
 var apply_session_defaults = function(frm) {
 	['case_sessions', 'case_history'].forEach(function(table_field) {
+		const field = frm.fields_dict[table_field];
+		if (!field || !field.df || !field.grid) {
+			return;
+		}
+
 		(frm.doc[table_field] || []).forEach(function(row) {
 			apply_defaults_to_session_row(frm, row);
 		});
-		frm.refresh_field(table_field);
+		field.refresh();
 	});
 }
 
